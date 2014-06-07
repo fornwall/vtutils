@@ -7,13 +7,15 @@
 
 int main(int argc, char** argv)
 {
-	bool human_readable = argc > 2 && (strcmp(argv[1], "-h") == 0);
-	if (argc < 2 || (argc == 3 && human_readable)) {
-		fprintf(stderr, "usage: [-h] %s codepoint ...\n", argv[0]);
+	bool human_readable = argc == 3 && (strcmp(argv[1], "-d") == 0);
+	if (argc < 2 || (argc == 2 && human_readable)) {
+		fprintf(stderr, "usage: %s [-d] codepoint ...\n", argv[0]);
 		return 1;
 	}
 
-	for (int i = (human_readable ? 2 : 1); i < argc; i++) {
+	int start_index = human_readable ? 2 : 1;
+
+	for (int i = start_index; i < argc; i++) {
 		long c = strtol(argv[i], NULL, 0);
 		if (c == 0 || c >= 0x110000) {
 			fprintf(stderr, "Error: Invalid code point '%s' - specify a number in the range [1-1114112]\n", argv[i]);
@@ -25,7 +27,7 @@ int main(int argc, char** argv)
 		}
 	}
 
-	for (int i = 1; i < argc; i++) {
+	for (int i = start_index; i < argc; i++) {
 		long c = strtol(argv[i], NULL, 0);
 		uint8_t buffer[5];
 		uint8_t* b = buffer;
