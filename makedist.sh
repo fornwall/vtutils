@@ -2,6 +2,7 @@
 
 ./prepare.sh
 
+rm -Rf build
 mkdir build
 cd build
 ../configure
