@@ -36,8 +36,16 @@ int main(int argc, char** argv)
 	what = VTSIZE_SIZE_ALL;
 	for (int i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "-c") == 0) {
+			if (what == VTSIZE_SIZE_ONLY_ROWS) {
+				fprintf(stderr, "%s: cannot combine -c and -r\n", argv[0]);
+				return 1;
+			}
 			what = VTSIZE_SIZE_ONLY_COLS;
 		} else if (strcmp(argv[i], "-r") == 0) {
+			if (what == VTSIZE_SIZE_ONLY_COLS) {
+				fprintf(stderr, "%s: cannot combine -c and -r\n", argv[0]);
+				return 1;
+			}
 			what = VTSIZE_SIZE_ONLY_ROWS;
 		} else if (strcmp(argv[i], "-w") == 0) {
 			watch = true;
