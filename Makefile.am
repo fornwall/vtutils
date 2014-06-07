@@ -9,3 +9,5 @@ vtquery_SOURCES = vtquery.cpp
 vtshowkeys_SOURCES = vtutils.h vtshowkeys.cpp
 vtsize_SOURCES = vtsize.c
 
+dist_man1_MANS = man/vtshowkeys.1 man/vtsize.1
+
