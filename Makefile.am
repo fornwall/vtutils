@@ -11,3 +11,5 @@ vtsize_SOURCES = src/vtsize.c
 
 dist_man1_MANS = man/toutf8.1 man/vtshowkeys.1 man/vtsize.1
 
+# Installs the files in $PREFIX/share/$pkgname/
+dist_pkgdata_DATA = data/UnicodeData.txt data/Blocks.txt
