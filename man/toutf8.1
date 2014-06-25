@@ -1,0 +1,24 @@
+.TH VTSIZE 1
+.SH NAME
+toutf8 \- code points to UTF-8 encoder
+.SH SYNOPSIS
+.B toutf8
+[\fB\-h\fR]
+[\fB\-s\fR]
+.SH DESCRIPTION
+.B toutf8
+Takes code points given as arguments and encodes them into UTF-8
+
+.SH OPTIONS
+
+.TP
+.BR \-h
+Show the resulting UTF-8 with human readable hexadecimal strings
+
+.TP
+.BR \-s
+Write the surrogates (U+D800 to U+DFFF) instead of giving an error
+
+.SH AUTHOR
+Fredrik Fornwall <fredrik@fornwall.net>
+
