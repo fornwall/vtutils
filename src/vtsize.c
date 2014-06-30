@@ -1,3 +1,5 @@
+// Defining _XOPEN_SOURCE is necessary for sigaction(2) on linux
+#define _XOPEN_SOURCE
 #include <signal.h>
 #include <stdbool.h>
 #include <stdio.h>
