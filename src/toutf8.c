@@ -57,13 +57,15 @@ int main(int argc, char** argv)
                         fprintf(stderr, "%s: invalid code point '%s' - specify a number in the range [1-1114111]\n", argv[0], argv[i]);
                         return 1;
                 }
-                if (c >= 0xD800 && c <= 0xDBFF) {
-                        fprintf(stderr, "%s: invalid high surrogate %s\n", argv[0], argv[i]);
-                        return 1;
-                }
-                if (c >= 0xDC00 && c <= 0xDFFF) {
-                        fprintf(stderr, "%s: invalid low surrogate %s\n", argv[0], argv[i]);
-                        return 1;
+                if (!allow_surrogates) {
+                        if (c >= 0xD800 && c <= 0xDBFF) {
+                                fprintf(stderr, "%s: invalid high surrogate %s\n", argv[0], argv[i]);
+                                return 1;
+                        }
+                        if (c >= 0xDC00 && c <= 0xDFFF) {
+                                fprintf(stderr, "%s: invalid low surrogate %s\n", argv[0], argv[i]);
+                                return 1;
+                        }
                 }
         }
 
