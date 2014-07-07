@@ -30,6 +30,7 @@ int main(int argc, char** argv) {
 
 	struct option long_options[] = {
 		{"both",  required_argument, 0, 'b'},
+		{"help",  required_argument, 0, 'h'},
 		{"icon",  required_argument, 0, 'i'},
 		{"restore", no_argument, 0, 'r'},
 		{"save", no_argument, 0, 's'},
@@ -43,7 +44,7 @@ int main(int argc, char** argv) {
         bool do_execute = false;
         char const* temporary_title = NULL;
 	while (true) {
-                int c = getopt_long(argc, argv, "+birst:w", long_options, &option_index);
+                int c = getopt_long(argc, argv, "+bhirst:w", long_options, &option_index);
                 if (c == -1) break;
                 switch (c) {
                         case 'b': 
