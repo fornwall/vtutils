@@ -11,4 +11,4 @@ vtshowkeys_SOURCES = src/vtutils.h src/vtshowkeys.cpp \
 vtsize_SOURCES = src/vtsize.c
 vttitle_SOURCES = src/vttitle.cpp
 
-dist_man1_MANS = man/toutf8.1 man/vtshowkeys.1 man/vtsize.1
+dist_man1_MANS = man/toutf8.1 man/vtshowkeys.1 man/vtsize.1 man/vttitle.1
