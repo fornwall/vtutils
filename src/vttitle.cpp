@@ -1,8 +1,9 @@
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 #define CONTROL_CSI "\033["
 #define CONTROL_OSC "\033]"
