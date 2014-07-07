@@ -9,10 +9,11 @@
 #define CONTROL_ST "\033\\"
 #define CONTROL_BEL "\07"
 
-enum class text_parameter { tab = 1, window = 2 };
+enum class text_parameter { both = 0, tab = 1, window = 2 };
 
 void die_explaining(char* program_name) {
         fprintf(stderr, "usage: %s [OPTIONS] title\n"
+                        "\t-b, --both            set both icon name and window title\n"
                         "\t-i, --icon            set icon name instead of window title\n"
                         "\t-r, --restore         restore/pop title from stack\n"
                         "\t-s, --save            save/push title to stack\n"
@@ -27,6 +28,7 @@ int main(int argc, char** argv) {
 	char* program_name = argv[0];
 
 	struct option long_options[] = {
+		{"both",  required_argument, 0, 'b'},
 		{"icon",  required_argument, 0, 'i'},
 		{"restore", no_argument, 0, 'r'},
 		{"save", no_argument, 0, 's'},
@@ -40,9 +42,12 @@ int main(int argc, char** argv) {
         bool do_execute = false;
         char const* temporary_title = NULL;
 	while (true) {
-                int c = getopt_long(argc, argv, "+irst:w", long_options, &option_index);
+                int c = getopt_long(argc, argv, "+birst:w", long_options, &option_index);
                 if (c == -1) break;
                 switch (c) {
+                        case 'b': 
+                                parameter_to_set = text_parameter::both;
+                                break;
                         case 'i': 
                                 parameter_to_set = text_parameter::tab;
                                 break;
