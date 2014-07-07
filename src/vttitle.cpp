@@ -1,6 +1,7 @@
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 
 #define CONTROL_CSI "\033["
@@ -8,73 +9,123 @@
 #define CONTROL_ST "\033\\"
 #define CONTROL_BEL "\07"
 
-enum class text_parameter { both = 0, tab = 1, window = 2 };
+enum class text_parameter { tab = 1, window = 2 };
 
 void die_explaining(char* program_name) {
-	fprintf(stderr, "usage: %s [-p parameter] title\n"
-			"\t-p [both/icon/tab/window] what parameter to set\n"
-			, program_name);
-	exit(1);
+        fprintf(stderr, "usage: %s [OPTIONS] title\n"
+                        "\t-i, --icon            set icon name instead of window title\n"
+                        "\t-r, --restore         restore/pop title from stack\n"
+                        "\t-s, --save            save/push title to stack\n"
+                        "\t-t, --temporary-title title while executing\n"
+                        "\t-w, --while-executing show title while executing, then restore\n"
+                        , program_name);
+        exit(1);
 }
 
 int main(int argc, char** argv) {
-	text_parameter parameter_to_set = text_parameter::both;
+	text_parameter parameter_to_set = text_parameter::window;
 	char* program_name = argv[0];
 
 	struct option long_options[] = {
-		{"param",            required_argument, 0, 'p'},
+		{"icon",  required_argument, 0, 'i'},
+		{"restore", no_argument, 0, 'r'},
+		{"save", no_argument, 0, 's'},
+		{"temporary-title", no_argument, 0, 't'},
+		{"while-executing", no_argument, 0, 'w'},
 		{0, 0, 0, 0}
 	};
 	int option_index = 0;
+        bool do_save = false;
+        bool do_restore = false;
+        bool do_execute = false;
+        char const* temporary_title = NULL;
 	while (true) {
-		int c = getopt_long(argc, argv, "p:", long_options, &option_index);
-		if (c == -1) break;
-		switch (c) {
-			case 0:
-				/* If this option set a flag, do nothing else now. */
-				if (long_options[option_index].flag != 0)
-					break;
-				printf ("option %s", long_options[option_index].name);
-				if (optarg) printf (" with arg %s", optarg);
-				printf ("\n");
-				break;
-			case 'p': 
-				if (strcmp("icon", optarg) == 0 || strcmp("tab", optarg) == 0) {
-					parameter_to_set = text_parameter::tab;
-					break;
-				} else if (strcmp("window", optarg) == 0) {
-					parameter_to_set = text_parameter::window;
-					break;
-				} else if (strcmp("both", optarg) == 0) {
-					parameter_to_set = text_parameter::both;
-					break;
-				} else {
-					// fallthough
-				}
-			default:
-				die_explaining(program_name);
-		}
-	}
-	argc -= optind;
-	argv += optind;
+                int c = getopt_long(argc, argv, "+irst:w", long_options, &option_index);
+                if (c == -1) break;
+                switch (c) {
+                        case 'i': 
+                                parameter_to_set = text_parameter::tab;
+                                break;
+                        case 'r':
+                                do_restore = true;
+                                break;
+                        case 's':
+                                do_save = true;
+                                break;
+                        case 't':
+                                temporary_title = optarg;
+                                break;
+                        case 'w':
+                                do_execute = true;
+                                break;
+                        default:
+                                die_explaining(program_name);
+                }
+                if (c == 'w') break;
+        }
+        argc -= optind;
+        argv += optind;
 
-	if (argc < 1) die_explaining(program_name);
+        if (do_restore && do_save) {
+                fprintf(stderr, "cannot both save and restore\n");
+                return 1;
+        } else if (do_restore && argc > 0) {
+                fprintf(stderr, "cannot combine restoring with a title\n");
+                return 1;
+        } else if (argc < 1 && !(do_save || do_restore)) {
+                fprintf(stderr, "requires a title\n");
+                return 1;
+        }
 
-	char new_title[1024];
-	int offset = 0;
-	for (int i = 0; i < argc; i++) {
-		int argv_len = strlen(argv[i]);
-		memcpy(new_title + offset, argv[i], argv_len);
-		offset += argv_len;
-		if (i != argc - 1) {
-			new_title[offset] = ' ';
-			offset++;
-		}
-	}
+        if (do_execute) do_save = true;
 
-	new_title[offset] = '\0';
+        if (do_save || do_restore) printf(CONTROL_CSI "%d;%dt", (do_save ? 22 : 23), int(parameter_to_set));
+        if (do_restore || argc == 0) return 0;
+
+	char new_title_buffer[1024];
+        char const* new_title;
+        if (temporary_title) {
+                new_title = temporary_title;
+        } else {
+                new_title = new_title_buffer; 
+                unsigned int offset = 0;
+                for (int i = 0; i < argc; i++) {
+                        int argv_len = strlen(argv[i]);
+                        if (argv_len + offset > sizeof(new_title_buffer)) {
+                                fprintf(stderr, "Too large window title - only %d bytes allowed\n", (int) sizeof(new_title_buffer));
+                                return 1;
+                        }
+                        memcpy(new_title_buffer + offset, argv[i], argv_len);
+                        offset += argv_len;
+                        if (i != argc - 1) {
+                                new_title_buffer[offset] = ' ';
+                                offset++;
+                        }
+                }
+                new_title_buffer[offset] = '\0';
+        }
+
 	printf(CONTROL_OSC "%d;%s" CONTROL_BEL, int(parameter_to_set), new_title);
 	fflush(stdout);
+
+        if (do_execute) {
+                pid_t pid = fork();
+                if (pid < 0) {
+                        perror("fork()");
+                        return 1;
+                } else if (pid == 0) {
+                        execvp(argv[0], argv);
+                        fprintf(stderr, "%s - ", argv[0]);
+                        perror("");
+                        exit(1);
+                } else {
+                        int status;
+                        wait(&status);
+                        printf(CONTROL_CSI "23;%dt", int(parameter_to_set));
+                        return (WIFEXITED(status)) ? WEXITSTATUS(status) : 1;
+                }
+        }
+
 	return 0;
 }
 
