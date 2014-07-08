@@ -1,5 +1,5 @@
-CFLAGS = -Wall -Wextra -pedantic -Wno-gnu-binary-literal -std=c99 -Os
-CXXFLAGS = -Wall -Wextra -pedantic -Wno-gnu-binary-literal -std=c++11 -Os
+AM_CFLAGS = -Wall -Wextra -pedantic -Wno-gnu-binary-literal -std=c99 -Os
+AM_CXXFLAGS = -Wall -Wextra -pedantic -Wno-gnu-binary-literal -std=c++11 -Os
 
 bin_PROGRAMS = toutf8 vtshowkeys vtsize vtcap vtquery vttitle
 
