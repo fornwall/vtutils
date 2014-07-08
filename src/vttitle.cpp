@@ -13,14 +13,18 @@
 enum class text_parameter { both = 0, tab = 1, window = 2 };
 
 void die_explaining(char* program_name) {
-        fprintf(stderr, "usage: %s [OPTIONS] title\n"
-                        "\t-b, --both            set both icon name and window title\n"
-                        "\t-i, --icon            set icon name instead of window title\n"
-                        "\t-r, --restore         restore/pop title from stack\n"
-                        "\t-s, --save            save/push title to stack\n"
-                        "\t-t, --temporary-title title while executing\n"
-                        "\t-w, --while-executing show title while executing, then restore\n"
-                        , program_name);
+        fprintf(stderr, "Usage: %s [-b] [-i] [-s] <title>\n"
+                        "   or: %s -r\n"
+                        "   or: %s [-t <title>] -w <command-to-execute>\n"
+                        "\n"
+                        "Options:\n"
+                        "  -b, --both               set both icon name and window title\n"
+                        "  -i, --icon               set icon name instead of window title\n"
+                        "  -r, --restore            restore/pop title from stack\n"
+                        "  -s, --save               save/push title to stack for setting new title\n"
+                        "  -t, --temporary-title    title while executing\n"
+                        "  -w, --while-executing    show title while executing, then restore\n"
+                        , program_name, program_name, program_name);
         exit(1);
 }
 
