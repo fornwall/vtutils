@@ -1,54 +1,33 @@
 .Dd July 3 2014
 .Dt VTQUERY 1
-
 .Sh NAME
 .Nm vtquery
 .Nd terminal terminfo/termcap query utility
-
 .Sh SYNOPSIS
 .Nm vtquery
 .Op Ar name
-
-.Ek
-
 .Sh DESCRIPTION
 The
 .Nm vtquery
 utility queries the current terminal for terminfo or termcap capabilities.
-
-It uses the following section from the XTerm Control Sequences (http://invisible-island.net/xterm/ctlseqs/ctlseqs.html) document:
-
-	DCS + q Pt ST
-	Request Termcap/Terminfo String (xterm, experimental).  The
-	string following the "q" is a list of names encoded in hexadecimal
-	(2 digits per character) separated by ; which correspond to termcap
-	or terminfo key names.
-	Two special features are also recognized, which are not key
-	names: Co for termcap colors (or colors for terminfo colors),
-	and TN for termcap name (or name for terminfo name).
-	xterm responds with DCS 1 + r Pt ST for valid requests, adding
-	to Pt an = , and the value of the corresponding string that
-	xterm would send, or DCS 0 + r Pt ST for invalid requests.
-	The strings are encoded in hexadecimal (2 digits per character).
-
 .Pp
-
+It uses the following section from the XTerm Control Sequences (http://invisible-island.net/xterm/ctlseqs/ctlseqs.html) document:
+.Pp
+DCS + q Pt ST
+Request Termcap/Terminfo String (xterm, experimental). The string following the "q" is a list of names encoded in hexadecimal (2 digits per character) separated by ; which correspond to termcap or terminfo key names. Two special features are also recognized, which are not key names: Co for termcap colors (or colors for terminfo colors), and TN for termcap name (or name for terminfo name). xterm responds with DCS 1 + r Pt ST for valid requests, adding to Pt an = , and the value of the corresponding string that xterm would send, or DCS 0 + r Pt ST for invalid requests. The strings are encoded in hexadecimal (2 digits per character).
+.Pp
 .Sh EXAMPLES
-
 Query for the number of colors:
 .Pp
 .Dl $ vtquery Co
 .Pp
-
 Query for the terminal name:
 .Pp
 .Dl $ vtquery TN
 .Pp
-
 Query for the kB termcap value:
 .Pp
 .Dl $ vtquery kB
 .Pp
-
 .Sh AUTHOR
 Fredrik Fornwall <fredrik@fornwall.net>
