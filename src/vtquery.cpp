@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
+#include <getopt.h>
 
 void request_termcap(char const* s)
 {
@@ -31,6 +32,7 @@ void read_and_echo() {
 	}
 	if (buffer[2] == '0') {
 		printf("Terminal responded with invalid request\n");
+		return;
 	}
 
 	for (int i = 5; i + 1 < read_now && buffer[i] != 033; i += 2) {
@@ -50,12 +52,39 @@ void read_and_echo() {
 	printf("\n");
 }
 
+void decPrivateMode(unsigned int mode, bool set)
+{
+	printf("\033[?%u%c", mode, (set ? 'h' : 'l'));
+}
+
 int main(int argc, char** argv)
 {
-	if (argc != 2) {
-		fprintf(stderr, "usage: vtquery <capability>\n");
-		return 1;
+	struct option long_options[] = {
+		{"app-cursors",      no_argument,       0, 'c'},
+		{"help",    	     no_argument, 	0, 'h'},
+		{"app-keypad",       no_argument,       0, 'k'},
+		{0, 0, 0, 0}
+	};
+	bool set_cursor_app = false;
+	bool set_keypad_app = false;
+
+	int option_index = 0;
+	while (true) {
+		int c = getopt_long(argc, argv, "achklmns:tu", long_options, &option_index);
+		if (c == -1) break;
+		switch (c) {
+			case 'c': set_cursor_app = true; break;
+			case 'k': set_keypad_app = true; break;
+			default:
+				  fprintf(stderr, "usage: %s [-c] [-k] [name]\n"
+						  "  -c    Set Application Cursor Keys (DECCKM)\n"
+						  "  -k    Set Application keypad (DECNKM)\n"
+						  , argv[0]);
+				  return 1;
+		}
 	}
+        argc -= optind;
+        argv += optind;
 
 	struct termios vt_orig;
 	tcgetattr(0, &vt_orig); /* get the current settings */
@@ -66,8 +95,15 @@ int main(int argc, char** argv)
 	trm.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
 	tcsetattr(STDIN_FILENO, TCSANOW, &trm);
 
-	request_termcap(argv[1]);
+	if (set_cursor_app) decPrivateMode(1, true);
+	if (set_keypad_app) decPrivateMode(66, true);
+	fflush(stdout);
+
+	request_termcap(argv[0]);
 	read_and_echo();
+
+	if (set_cursor_app) decPrivateMode(1, false);
+	if (set_keypad_app) decPrivateMode(66, false);
 
 	tcsetattr(0, TCSANOW, &vt_orig);
 	fflush(stdout);

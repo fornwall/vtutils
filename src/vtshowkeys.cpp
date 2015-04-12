@@ -290,7 +290,7 @@ int main(int argc, char** argv)
 
 	if (set_cursor_app) decPrivateMode(1, true);
 	if (set_keypad_app) decPrivateMode(66, true);
-	if (mouse_mode) { decPrivateMode(1000, true); decPrivateMode(1006, true); }
+	if (mouse_mode) { decPrivateMode(1000, true); decPrivateMode(1002, true); decPrivateMode(1006, true); }
 	if (alternate_screen) decPrivateMode(1049, true);
 	fflush(stdout);
 
