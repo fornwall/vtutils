@@ -1,10 +1,8 @@
 .Dd July 3 2014
 .Dt VTTITLE 1
-
 .Sh NAME
 .Nm vttitle
 .Nd terminal title manipulator
-
 .Sh SYNOPSIS
 .Nm vttitle
 .Bk -words
@@ -14,58 +12,43 @@
 .Op Fl Fl save
 .Op Fl Fl temporary-title Ar command
 .Op Fl Fl while-executing Ar command
-
 .Ek
-
 .Sh DESCRIPTION
 The
 .Nm vttitle
 utility manipulates the terminal title.
-
 .Pp
 The following options are available:
-
 .Bl -tag -width indent
-
 .It Fl b , Fl Fl both
 Manipulate both the icon name and window title.
-
 .It Fl i , Fl Fl icon
 Manipulate the icon name instead of window title.
-
 .It Fl r , Fl Fl restore
 Restore (pop) from the title stack. May not be combined with saving or setting a new title.
-
 .It Fl s , Fl Fl save
 Save (push) to the title stack.
-
 .It Fl t Ar title , Fl Fl temporary-title Ar title
 The temporary title to use while executing.
-
 .It Fl w Ar command , Fl Fl while-executing Ar command
 The command to execute.
-
+.El
 .Sh EXAMPLES
-
 Set the terminal window title:
 .Pp
 .Dl $ vttitle Hello, terminal
 .Pp
-
 Temporarily show a title when ssh:ing to a remove host, then restore the previous one:
 .Pp
 .Dl $ vttitle -s "ssh remotehost"; ssh remotehost; vttitle -r
 .Pp
-
 which may be done in a shorter form:
 .Pp
 .Dl $ vttitle -w ssh remotehost
 .Pp
-
 Show progress while doing batch jobs:
 .Pp
 .Dl $ for job in 1 2 3 4 5; do vttitle -t $job -w execute_job $job; done
 .Pp
-
 .Sh AUTHOR
-Fredrik Fornwall <fredrik@fornwall.net>
+.An Fredrik Fornwall Aq Mt fredrik@fornwall.net
