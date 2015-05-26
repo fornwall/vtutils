@@ -23,11 +23,6 @@ void read_and_echo() {
 	int read_now = read(0, buffer, sizeof(buffer)-1);
 	if (read_now < 7 || buffer[0] != 033 || buffer[1] != 'P' || !(buffer[2] == '1' || buffer[2] == '0') || buffer[3] != '+' || buffer[4] != 'r') {
 		fprintf(stderr, "Invalid %d byte response, not 'DCS + q XX XX ST'\n", read_now);
-		if (buffer[0] != 033) fprintf(stderr, "First char wrong (should be escape)\n");
-		if (buffer[1] != 'P') fprintf(stderr, "WRONG SECOND\n");
-		if (buffer[2] != '1') fprintf(stderr, "WRONG THIRD\n");
-		if (buffer[3] != '+') fprintf(stderr, "WRONG FOURTH\n");
-		if (buffer[4] != 'r') fprintf(stderr, "WRONG FIFTH\n");
 		return;
 	}
 	if (buffer[2] == '0') {
