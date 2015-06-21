@@ -1,4 +1,4 @@
-AC_INIT([vtutils], [0.4], [fredrik@fornwall.net], [vtutils], [https://github.com/fornwall/vtutils])
+AC_INIT([vtutils], [0.5], [fredrik@fornwall.net], [vtutils], [https://github.com/fornwall/vtutils])
 AC_PREREQ([2.59])
 # foreign avoids "GNU-style NEWS README AUTHORS ChangeLog" files:
 AM_INIT_AUTOMAKE([1.10 no-define foreign subdir-objects])
